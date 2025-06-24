@@ -13,10 +13,10 @@ export default {
       // 前端页面
       const html = `
         <!DOCTYPE html>
-        <html lang="en">
+        <html lang="zh">
         <head>
           <meta charset="UTF-8">
-          <title>AI Image Generator</title>
+          <title>AI 图像生成</title>
           <style>
             body {
               font-family: Arial, sans-serif;
@@ -57,7 +57,7 @@ export default {
           </style>
         </head>
         <body>
-          <h1>AI Image Generator</h1>
+          <h1>AI 图像生成</h1>
           <form id="form">
             <input type="text" id="prompt" placeholder="请输入描述（支持中文）"/><br>
             <select id="size">
@@ -112,13 +112,14 @@ export default {
         source_lang: "zh",
         target_lang: "en"
       });
-      const translatedPrompt = translationResponse.translations[0].translation_text;
+
+      const translatedPrompt = translationResponse.translation_text;
 
       // 处理尺寸
-      let [width, height] = [1024, 1024]; // 默认
+      let [width, height] = [1024, 1024]; // 默认尺寸
       if (sizeStr) {
         const parts = sizeStr.split("x");
-        if (parts.length == 2) {
+        if (parts.length === 2) {
           width = parseInt(parts[0]);
           height = parseInt(parts[1]);
         }
