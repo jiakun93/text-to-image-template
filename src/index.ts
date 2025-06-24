@@ -106,14 +106,23 @@ export default {
     }
 
     try {
-      // 翻译中文 prompt -> 英文
-      const translationResponse = await env.AI.run("@cf/meta/m2m100-1.2b", {
-        text: prompt,
-        source_lang: "zh",
-        target_lang: "en"
-      });
+      // 简单判断是否是英文 (不严谨，但够用)
+      const isEnglish = /^[\x00-\x7F]*$/.test(prompt);
+      let finalPrompt = prompt;
 
-      const translatedPrompt = translationResponse.translation_text;
+      if (!isEnglish) {
+        // 翻译中文 prompt -> 英文
+        const translationResponse = await env.AI.run("@cf/meta/m2m100-1.2b", {
+          text: prompt,
+          source_lang: "zh",
+          target_lang: "en"
+        });
+        finalPrompt = translationResponse.translation_text;
+      }
+
+      if (!finalPrompt || finalPrompt.trim() === '') {
+        throw new Error("翻译后 prompt 为空，请重新输入有效描述。");
+      }
 
       // 处理尺寸
       let [width, height] = [1024, 1024]; // 默认尺寸
@@ -130,7 +139,7 @@ export default {
 
       // 生成图片
       const imageResponse = await env.AI.run("@cf/stabilityai/stable-diffusion-xl-base-1.0", {
-        prompt: translatedPrompt,
+        prompt: finalPrompt,
         width,
         height,
         seed
